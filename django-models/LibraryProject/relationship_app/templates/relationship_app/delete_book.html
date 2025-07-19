@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Book</title>
+</head>
+<body>
+    <h1>Delete Book</h1>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    
+    <p>Are you sure you want to delete the book "{{ book.title }}" by {{ book.author.name }}?</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" onclick="return confirm('Are you sure?')">Delete Book</button>
+    </form>
+    
+    <a href="{% url 'list_books' %}">Cancel - Back to Books List</a>
+</body>
+</html>
