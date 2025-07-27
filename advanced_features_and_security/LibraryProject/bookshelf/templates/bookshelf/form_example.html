@@ -1,0 +1,159 @@
+{% extends 'bookshelf/base.html' %}
+
+{% block title %}Form Example - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">📝 Example Form - Security Demonstration</h3>
+            </div>
+            <div class="card-body">
+                <!-- Security Notice -->
+                <div class="alert alert-info" role="alert">
+                    <h5 class="alert-heading">🔒 Security Features Demonstrated</h5>
+                    <ul class="mb-0">
+                        <li><strong>CSRF Protection:</strong> Form includes CSRF token to prevent cross-site request forgery</li>
+                        <li><strong>Input Validation:</strong> Server-side validation prevents malicious input</li>
+                        <li><strong>XSS Prevention:</strong> Dangerous characters and scripts are filtered</li>
+                        <li><strong>Data Sanitization:</strong> All user inputs are cleaned and validated</li>
+                    </ul>
+                </div>
+
+                <p class="text-muted">
+                    This form demonstrates Django's built-in security features. All inputs are validated 
+                    and sanitized to prevent common web vulnerabilities.
+                </p>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Name Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">
+                            {{ form.name.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if form.name.help_text %}
+                            <div class="form-text">{{ form.name.help_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            {{ form.email.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.email.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if form.email.help_text %}
+                            <div class="form-text">{{ form.email.help_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Message Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.message.id_for_label }}" class="form-label">
+                            {{ form.message.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.message.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if form.message.help_text %}
+                            <div class="form-text">{{ form.message.help_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'book_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Books
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send"></i> Submit Form
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Security Implementation Details -->
+                {% if debug %}
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">🔍 Security Implementation Details</h6>
+                    </div>
+                    <div class="card-body">
+                        <small class="text-muted">
+                            <h6>Form Security Features:</h6>
+                            <ul>
+                                <li>✅ <strong>CSRF Token:</strong> {{ csrf_token|slice:":8" }}... (prevents CSRF attacks)</li>
+                                <li>✅ <strong>Input Validation:</strong> All fields validated server-side</li>
+                                <li>✅ <strong>XSS Prevention:</strong> Dangerous characters filtered</li>
+                                <li>✅ <strong>Length Limits:</strong> Prevents buffer overflow attacks</li>
+                                <li>✅ <strong>HTML Escaping:</strong> Output safely escaped in templates</li>
+                                <li>✅ <strong>POST-Redirect-GET:</strong> Prevents form resubmission</li>
+                            </ul>
+                            
+                            <h6 class="mt-3">Filtered Content Examples:</h6>
+                            <ul>
+                                <li>Script tags: <code>&lt;script&gt;</code>, <code>&lt;/script&gt;</code></li>
+                                <li>Event handlers: <code>onclick=</code>, <code>onload=</code></li>
+                                <li>JavaScript: <code>javascript:</code></li>
+                                <li>Special characters: <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code></li>
+                                <li>SQL injection patterns: <code>;</code>, <code>--</code></li>
+                            </ul>
+                        </small>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Test Cases for Security -->
+                {% if debug %}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">🧪 Security Test Cases</h6>
+                    </div>
+                    <div class="card-body">
+                        <small class="text-muted">
+                            <p><strong>Try entering these in the form to test security:</strong></p>
+                            <ul>
+                                <li><code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code> - Should fail validation</li>
+                                <li><code>Robert'; DROP TABLE books; --</code> - SQL injection attempt</li>
+                                <li><code>&lt;img src="x" onerror="alert('XSS')"&gt;</code> - XSS via image tag</li>
+                                <li>Very long strings (>500 chars) - Should be rejected</li>
+                            </ul>
+                            <p class="text-warning">
+                                <i class="bi bi-info-circle"></i>
+                                All these attempts should be safely handled by the form validation.
+                            </p>
+                        </small>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block breadcrumb_items %}
+    <li class="breadcrumb-item active">Form Example</li>
+{% endblock %}

@@ -6,7 +6,7 @@ from django.http import HttpResponseForbidden
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Book, CustomUser
-from .forms import BookForm
+from .forms import BookForm, ExampleForm
 
 # Create your views here.
 
@@ -151,3 +151,29 @@ def secure_book_search(request):
         'books': books,
         'query': query
     })
+
+# Example Form View demonstrating security features
+def form_example(request):
+    """
+    Example view demonstrating secure form handling.
+    Includes CSRF protection, input validation, and XSS prevention.
+    """
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the cleaned data safely
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            
+            # In a real application, you would save this data or send an email
+            messages.success(
+                request, 
+                f'Thank you {name}! Your message has been received. '
+                f'We will contact you at {email} if needed.'
+            )
+            return redirect('form_example')  # Redirect after POST to prevent re-submission
+    else:
+        form = ExampleForm()
+    
+    return render(request, 'bookshelf/form_example.html', {'form': form})

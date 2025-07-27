@@ -191,6 +191,13 @@ SESSION_COOKIE_AGE = 3600  # Session timeout: 1 hour
 # These headers help prevent XSS, clickjacking, and other attacks
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
+# Proxy SSL Header Configuration
+# When using a reverse proxy (like Nginx) that handles SSL termination
+# Uncomment the following lines if deploying behind a proxy:
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# This tells Django to trust the X-Forwarded-Proto header from the proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Content Security Policy (CSP) Settings
 # Note: For full CSP implementation, consider using django-csp package
 # Basic CSP headers can be set in views or middleware

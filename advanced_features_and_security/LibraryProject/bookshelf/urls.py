@@ -18,4 +18,7 @@ urlpatterns = [
     
     # Security-focused search functionality
     path('books/search/', views.secure_book_search, name='book_search'),
+    
+    # Example form demonstrating security features
+    path('form-example/', views.form_example, name='form_example'),
 ]

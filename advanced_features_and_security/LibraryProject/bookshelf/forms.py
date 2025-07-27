@@ -131,3 +131,69 @@ class CustomUserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+class ExampleForm(forms.Form):
+    """
+    Example form demonstrating Django security features.
+    This form includes CSRF protection, input validation, and XSS prevention.
+    """
+    name = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your name',
+            'maxlength': 100
+        }),
+        help_text='Enter your full name (max 100 characters)'
+    )
+    
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your email address'
+        }),
+        help_text='Enter a valid email address'
+    )
+    
+    message = forms.CharField(
+        max_length=500,
+        required=True,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your message',
+            'rows': 4,
+            'maxlength': 500
+        }),
+        help_text='Enter your message (max 500 characters)'
+    )
+    
+    def clean_name(self):
+        """Validate and sanitize name field."""
+        name = self.cleaned_data.get('name')
+        if name:
+            name = name.strip()
+            if len(name) < 2:
+                raise ValidationError("Name must be at least 2 characters long.")
+            # Basic XSS prevention - remove potentially harmful characters
+            dangerous_chars = ['<', '>', '"', "'", '&', ';', '--']
+            for char in dangerous_chars:
+                if char in name:
+                    raise ValidationError("Name contains invalid characters.")
+        return name
+    
+    def clean_message(self):
+        """Validate and sanitize message field."""
+        message = self.cleaned_data.get('message')
+        if message:
+            message = message.strip()
+            if len(message) < 10:
+                raise ValidationError("Message must be at least 10 characters long.")
+            # Basic XSS prevention
+            dangerous_chars = ['<script', '</script', 'javascript:', 'onclick=', 'onload=']
+            message_lower = message.lower()
+            for char in dangerous_chars:
+                if char in message_lower:
+                    raise ValidationError("Message contains potentially dangerous content.")
+        return message
