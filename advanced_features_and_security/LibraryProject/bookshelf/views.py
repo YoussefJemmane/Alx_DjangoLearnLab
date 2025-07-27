@@ -7,6 +7,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Book, CustomUser
 from .forms import BookForm, ExampleForm
+from .forms import ExampleForm
 
 # Create your views here.
 
