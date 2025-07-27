@@ -1,0 +1,71 @@
+{% extends 'bookshelf/base.html' %}
+
+{% block title %}Delete {{ book.title }} - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Confirm Deletion
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger" role="alert">
+                    <h5 class="alert-heading">⚠️ Warning!</h5>
+                    <p>You are about to permanently delete this book from the library system.</p>
+                    <hr>
+                    <p class="mb-0">This action cannot be undone.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ book.title }}</h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> {{ book.author }}<br>
+                            <strong>Publication Year:</strong> {{ book.publication_year }}
+                        </p>
+                    </div>
+                </div>
+
+                <form method="post" class="mt-3">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'book_detail' book.pk %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Delete Book
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Security Information -->
+                {% if debug %}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">Security Features</h6>
+                    </div>
+                    <div class="card-body">
+                        <small class="text-muted">
+                            <ul class="mb-0">
+                                <li>✅ CSRF token required for deletion ({{ csrf_token|slice:":8" }}...)</li>
+                                <li>✅ POST request required (prevents accidental deletion via GET)</li>
+                                <li>✅ Permission check performed in view</li>
+                                <li>✅ Confirmation page prevents accidental deletion</li>
+                            </ul>
+                        </small>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block breadcrumb_items %}
+    <li class="breadcrumb-item"><a href="{% url 'book_detail' book.pk %}">{{ book.title|truncatechars:20 }}</a></li>
+    <li class="breadcrumb-item active">Delete</li>
+{% endblock %}

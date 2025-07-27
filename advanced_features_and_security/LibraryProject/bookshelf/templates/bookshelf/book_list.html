@@ -1,0 +1,95 @@
+{% extends 'bookshelf/base.html' %}
+{% load static %}
+
+{% block title %}Books - Library Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>📚 Book Library</h1>
+    {% if perms.bookshelf.can_create %}
+        <a href="{% url 'book_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add New Book
+        </a>
+    {% endif %}
+</div>
+
+{% if books %}
+    <div class="row">
+        {% for book in books %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ book.title|truncatechars:50 }}</h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> {{ book.author }}<br>
+                            <strong>Published:</strong> {{ book.publication_year }}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="btn-group w-100" role="group">
+                            {% if perms.bookshelf.can_view %}
+                                <a href="{% url 'book_detail' book.pk %}" class="btn btn-outline-primary btn-sm">
+                                    View
+                                </a>
+                            {% endif %}
+                            {% if perms.bookshelf.can_edit %}
+                                <a href="{% url 'book_edit' book.pk %}" class="btn btn-outline-secondary btn-sm">
+                                    Edit
+                                </a>
+                            {% endif %}
+                            {% if perms.bookshelf.can_delete %}
+                                <a href="{% url 'book_delete' book.pk %}" class="btn btn-outline-danger btn-sm">
+                                    Delete
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination could be added here for large datasets -->
+    <div class="mt-4">
+        <p class="text-muted">Showing {{ books|length }} book{{ books|length|pluralize }}.</p>
+    </div>
+
+{% else %}
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-book" style="font-size: 4rem; color: #6c757d;"></i>
+        </div>
+        <h3 class="text-muted">No Books Found</h3>
+        <p class="text-muted">The library is empty. Add some books to get started!</p>
+        {% if perms.bookshelf.can_create %}
+            <a href="{% url 'book_create' %}" class="btn btn-primary">
+                Add Your First Book
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+
+<!-- Security Information (only in DEBUG mode for developers) -->
+{% if debug and user.is_superuser %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h6 class="mb-0">Security Implementation Notes</h6>
+    </div>
+    <div class="card-body">
+        <small class="text-muted">
+            <ul class="mb-0">
+                <li>✅ CSRF tokens are automatically included in all forms</li>
+                <li>✅ User permissions are checked before displaying action buttons</li>
+                <li>✅ XSS protection via template auto-escaping</li>
+                <li>✅ Content Security Policy headers set</li>
+                <li>✅ Secure headers configured (X-Frame-Options, X-Content-Type-Options)</li>
+            </ul>
+        </small>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block breadcrumb_items %}
+    <li class="breadcrumb-item active">All Books</li>
+{% endblock %}

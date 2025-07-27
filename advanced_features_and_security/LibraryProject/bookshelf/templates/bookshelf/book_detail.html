@@ -1,0 +1,66 @@
+{% extends 'bookshelf/base.html' %}
+
+{% block title %}{{ book.title }} - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="mb-0">📖 {{ book.title }}</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h5>Book Details</h5>
+                        <p><strong>Title:</strong> {{ book.title }}</p>
+                        <p><strong>Author:</strong> {{ book.author }}</p>
+                        <p><strong>Publication Year:</strong> {{ book.publication_year }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="btn-group" role="group">
+                    {% if perms.bookshelf.can_edit %}
+                        <a href="{% url 'book_edit' book.pk %}" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                    {% endif %}
+                    {% if perms.bookshelf.can_delete %}
+                        <a href="{% url 'book_delete' book.pk %}" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'book_list' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6>Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'book_search' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-search"></i> Search Books
+                    </a>
+                    {% if perms.bookshelf.can_create %}
+                        <a href="{% url 'book_create' %}" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-plus"></i> Add New Book
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block breadcrumb_items %}
+    <li class="breadcrumb-item active">{{ book.title|truncatechars:30 }}</li>
+{% endblock %}

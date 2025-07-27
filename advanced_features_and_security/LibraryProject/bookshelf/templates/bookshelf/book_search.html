@@ -1,0 +1,119 @@
+{% extends 'bookshelf/base.html' %}
+
+{% block title %}Search Books - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">🔍 Search Books</h3>
+            </div>
+            <div class="card-body">
+                <!-- Security Notice -->
+                <div class="alert alert-info" role="alert">
+                    <small>
+                        <i class="bi bi-shield-check"></i>
+                        Search is protected against SQL injection and XSS attacks.
+                    </small>
+                </div>
+
+                <form method="get" class="mb-4">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" 
+                               name="q" 
+                               value="{{ query|default:'' }}" 
+                               class="form-control" 
+                               placeholder="Enter book title or author..."
+                               maxlength="100"
+                               autocomplete="off">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                    <div class="form-text">
+                        Search is case-insensitive. Special characters are filtered for security.
+                    </div>
+                </form>
+
+                {% if query %}
+                    <h5>Search Results for: "{{ query }}"</h5>
+                    
+                    {% if books %}
+                        <div class="row">
+                            {% for book in books %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ book.title|truncatechars:40 }}</h6>
+                                            <p class="card-text">
+                                                <strong>Author:</strong> {{ book.author }}<br>
+                                                <strong>Year:</strong> {{ book.publication_year }}
+                                            </p>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                {% if perms.bookshelf.can_view %}
+                                                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-outline-primary">View</a>
+                                                {% endif %}
+                                                {% if perms.bookshelf.can_edit %}
+                                                    <a href="{% url 'book_edit' book.pk %}" class="btn btn-outline-secondary">Edit</a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mt-3">
+                            <p class="text-muted">Found {{ books|length }} book{{ books|length|pluralize }}.</p>
+                            {% if books|length == 50 %}
+                                <p class="text-warning">
+                                    <i class="bi bi-info-circle"></i>
+                                    Results limited to 50 for performance. Please refine your search.
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-search" style="font-size: 3rem; color: #6c757d;"></i>
+                            <h5 class="mt-3 text-muted">No books found</h5>
+                            <p class="text-muted">Try a different search term or check your spelling.</p>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-book" style="font-size: 3rem; color: #6c757d;"></i>
+                        <h5 class="mt-3 text-muted">Enter a search term</h5>
+                        <p class="text-muted">Search by book title or author name.</p>
+                    </div>
+                {% endif %}
+
+                <!-- Security Information -->
+                {% if debug %}
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">Security Implementation</h6>
+                    </div>
+                    <div class="card-body">
+                        <small class="text-muted">
+                            <ul class="mb-0">
+                                <li>✅ SQL Injection Prevention: Using Django ORM (Book.objects.filter)</li>
+                                <li>✅ XSS Prevention: Input sanitization and template escaping</li>
+                                <li>✅ DoS Prevention: Results limited to 50, query length limited to 100 chars</li>
+                                <li>✅ Input Validation: Dangerous characters filtered</li>
+                                <li>✅ Safe Database Queries: No raw SQL used</li>
+                            </ul>
+                        </small>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block breadcrumb_items %}
+    <li class="breadcrumb-item active">Search</li>
+{% endblock %}
